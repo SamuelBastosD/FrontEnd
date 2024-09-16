@@ -80,7 +80,7 @@ public class MenuFrame extends JFrame
       formatMenu.add(colorMenu);
       formatMenu.addSeparator();
 
-      String[] fontNames = {"Serif", "Monospaced", "SansSerif"};
+      String[] fontNames = {"Serif", "Monospaced", "SansSerif","Arial"};
       JMenu fontMenu = new JMenu("Font");
       fontMenu.setMnemonic('n');
 
