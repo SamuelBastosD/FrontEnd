@@ -115,7 +115,6 @@ public class TelaDePesquisa extends JFrame {
                         txtPesquisa.requestFocus();
                         return;
                     }
-
                     NavegadorDeRegistro.pesquisar();
                 }
             }
@@ -123,6 +122,7 @@ public class TelaDePesquisa extends JFrame {
 
         txtPesquisa.addKeyListener(
             new KeyAdapter() {
+                @Override
                 public void keyReleased(KeyEvent e) {
                     if (txtPesquisa.getText().trim().equals(txtUsuario) == false) {
                         btnPesquisar.setEnabled(true);
