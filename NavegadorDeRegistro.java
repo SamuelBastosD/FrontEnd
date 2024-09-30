@@ -1,156 +1,159 @@
-// Importação das bibliotecas necessárias para trabalhar com SQL e coleções
 import java.sql.*;
 import java.util.*;
 
-// A classe NavegadorDeRegistro herda de TelaDeAtualizacao para reutilizar seus componentes visuais
 public class NavegadorDeRegistro extends TelaDeAtualizacao {
 
-    // Método responsável por popular o ComboBox de IDs
+    // Método responsável por popular o combobox com os IDs disponíveis no banco de dados
     public static void popularIds() {
         try {
-            // Criação de uma lista temporária para armazenar os IDs
+            // Lista temporária para armazenar os IDs
             ArrayList<String> idsTemp = new ArrayList<>();
-            idsTemp.add("Selecione aqui o id"); // Adiciona uma opção padrão
-
-            // Estabelece conexão com o banco de dados
-            Connection conexao = MySQLConnector.conectar();
-
-            // SQL para selecionar todos os registros da tabela tbl_senac
-            String strSqlPopularIds = "select * from `db_senac`.`tbl_senac` order by `id` asc;";
+            // Adiciona uma opção padrão no início
+            idsTemp.add("Selecione aqui o id");
             
-            // Criação do Statement para executar a query SQL
+            // Conecta ao banco de dados
+            Connection conexao = MySQLConnector.conectar();
+            // Consulta SQL para selecionar todos os registros ordenados por ID
+            String strSqlPopularIds = "select * from `db_senac`.`tbl_senac` order by `id` asc;";
             Statement stmSqlPopularIds = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-            // Execução da query e armazenando o resultado no ResultSet
+            // Executa a consulta
             ResultSet rstSqlPopularIds = stmSqlPopularIds.executeQuery(strSqlPopularIds);
 
-            // Itera sobre os resultados e adiciona os IDs à lista temporária
+            // Itera sobre o resultado da consulta e adiciona os IDs à lista
             while (rstSqlPopularIds.next()) {
                 idsTemp.add(rstSqlPopularIds.getString("id"));
             }
 
-            // Converte a lista de IDs para um array e o atribui ao ComboBox
+            // Converte a lista temporária em um array de Strings e atribui à variável 'ids'
             ids = idsTemp.toArray(new String[0]);
 
-            // Fecha o Statement após o uso
+            // Fecha o Statement para liberar recursos
             stmSqlPopularIds.close();
         } catch (Exception e) {
-            // Exibe uma mensagem de erro em caso de falha na conexão ou execução da query
+            // Exibe mensagem de erro no componente de notificações
             lblNotificacoes.setText(setHtmlFormat("Não foi possível encontrar os ids! Por favor, verifique e tente novamente."));
-            System.err.println("Erro: " + e); // Imprime o erro no console
+            // Exibe o erro no console
+            System.err.println("Erro: " + e);
         }
     }
 
-    // Método responsável por atualizar os dados de um ID selecionado
+    // Método responsável por atualizar um registro baseado no ID selecionado
     public static void atualizarId() {
         try {
-            // Variáveis para armazenar as partes da query de atualização
             String atualizarNome = "";
             String atualizarEmail = "";
             String atualizarSenha = "";
 
-            // Verifica se o campo Nome foi alterado
+            // Verifica se o nome foi alterado
             if (!txtNome.getText().trim().equals(nomeAtual)) {
                 atualizarNome = "`nome` = '" + txtNome.getText() + "'";
             }
 
-            // Verifica se o campo Email foi alterado e formata a query
+            // Verifica se o email foi alterado
             if (!txtEmail.getText().trim().equals(emailAtual)) {
+                // Se o nome já tiver sido alterado, adiciona um "and" para concatenar a SQL
                 if (atualizarNome.length() > 0) {
                     atualizarEmail = " and ";
                 }
                 atualizarEmail += "`email` = '" + txtEmail.getText() + "'";
             }
 
-            // Verifica se o campo Senha foi alterado e formata a query
+            // Verifica se a senha foi alterada
             if (!String.valueOf(txtSenha.getPassword()).trim().equals(senhaAtual)) {
+                // Se o nome ou email já tiverem sido alterados, concatena o "and"
                 if (atualizarNome.length() > 0 || atualizarEmail.length() > 0) {
                     atualizarSenha = " and ";
                 }
                 atualizarSenha += "`senha` = '" + String.valueOf(txtSenha.getPassword()) + "'";
             }
 
-            // Se houver alterações nos campos, executa a atualização
+            // Se algum dos campos foi alterado, realiza a atualização no banco de dados
             if (atualizarNome.length() > 0 || atualizarEmail.length() > 0 || atualizarSenha.length() > 0) {
-                Connection conexao = MySQLConnector.conectar(); // Conecta ao banco de dados
-
-                // Monta a query SQL de atualização com os campos alterados
-                String strSqlAtualizarId = "update `db_senac`.`tbl_senac` set " + atualizarNome + atualizarEmail + atualizarSenha + 
-                                           " where `id` = " + cbxId.getSelectedItem().toString() + ";";
-                System.out.println(strSqlAtualizarId); // Exibe a query no console para fins de depuração
-
-                // Criação do Statement para executar a query de atualização
+                // Conecta ao banco de dados
+                Connection conexao = MySQLConnector.conectar();
+                // Monta a consulta SQL de atualização
+                String strSqlAtualizarId = "update `db_senac`.`tbl_senac` set " + atualizarNome + atualizarEmail + atualizarSenha + " where `id` = " + cbxId.getSelectedItem().toString() + ";";
+                
+                // Cria o Statement para executar a consulta
                 Statement stmSqlAtualizarId = conexao.createStatement();
-                stmSqlAtualizarId.addBatch(strSqlAtualizarId); // Adiciona a query ao batch
-                stmSqlAtualizarId.executeBatch(); // Executa a query
+                // Adiciona a consulta ao batch
+                stmSqlAtualizarId.addBatch(strSqlAtualizarId);
+                // Executa o batch de atualização
+                stmSqlAtualizarId.executeBatch();
 
-                // Atualiza as variáveis com os novos valores dos campos
+                // Atualiza os valores atuais com os novos valores
                 nomeAtual = txtNome.getText();
                 emailAtual = txtEmail.getText();
                 senhaAtual = String.valueOf(txtSenha.getPassword());
 
-                // Fecha o Statement após o uso
+                // Fecha o Statement
                 stmSqlAtualizarId.close();
-
-                // Exibe uma mensagem de sucesso na interface
+                
+                // Notifica o sucesso da atualização
                 lblNotificacoes.setText("O id " + cbxId.getSelectedItem().toString() + " foi atualizado com sucesso!");
             } else {
-                // Se não houver alterações, informa o usuário
+                // Se não houve alteração nos campos, notifica que não há nada para atualizar
                 lblNotificacoes.setText("Não foram encontradas alterações para atualizar o id " + cbxId.getSelectedItem().toString());
             }
         } catch (Exception e) {
-            // Exibe uma mensagem de erro em caso de falha na atualização
+            // Notifica falha ao tentar atualizar o registro
             lblNotificacoes.setText(setHtmlFormat("Não foi possível atualizar o id! Por favor, verifique e tente novamente."));
-            System.err.println("Erro: " + e); // Imprime o erro no console
+            // Exibe o erro no console
+            System.err.println("Erro: " + e);
         }
     }
 
-    // Método responsável por limpar os campos da interface
+    // Método para limpar os campos de texto e redefinir a seleção do combobox
     public static void limparCampos() {
-        txtNome.setText(""); // Limpa o campo Nome
-        txtEmail.setText(""); // Limpa o campo Email
-        txtSenha.setText(""); // Limpa o campo Senha
-        cbxId.setSelectedIndex(0); // Reseta a seleção do ComboBox
+        // Limpa os campos de nome, email e senha
+        txtNome.setText("");
+        txtEmail.setText("");
+        txtSenha.setText("");
+        // Reseta o combobox para o primeiro item (índice 0)
+        cbxId.setSelectedIndex(0);
     }
 
-    // Método responsável por atualizar os campos da interface com os dados do ID selecionado
+    // Método para atualizar os campos de texto com os dados de um registro baseado no ID selecionado
     public static void atualizarCampos(String id) {
         try {
-            // Verifica se um ID válido foi selecionado
+            // Verifica se o ID selecionado no combobox é válido
             if (cbxId.getSelectedIndex() > 0) {
-                Connection conexao = MySQLConnector.conectar(); // Conecta ao banco de dados
-
-                // SQL para buscar os dados do ID selecionado
+                // Conecta ao banco de dados
+                Connection conexao = MySQLConnector.conectar();
+                // Consulta SQL para buscar o registro correspondente ao ID selecionado
                 String strSqlAtualizarCampos = "select * from `db_senac`.`tbl_senac` where `id` = " + id + ";";
                 Statement stmSqlAtualizarCampos = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-
-                // Execução da query e armazenando o resultado no ResultSet
+                // Executa a consulta
                 ResultSet rstSqlAtualizarCampos = stmSqlAtualizarCampos.executeQuery(strSqlAtualizarCampos);
 
-                // Se encontrar o registro, preenche os campos com os dados
+                // Se o registro for encontrado, preenche os campos de texto com os dados
                 if (rstSqlAtualizarCampos.next()) {
-                    txtNome.setText(rstSqlAtualizarCampos.getString("nome")); // Atualiza o campo Nome
-                    nomeAtual = txtNome.getText(); // Armazena o valor atual do Nome
-                    txtEmail.setText(rstSqlAtualizarCampos.getString("email")); // Atualiza o campo Email
-                    emailAtual = txtEmail.getText(); // Armazena o valor atual do Email
-                    txtSenha.setText(rstSqlAtualizarCampos.getString("senha")); // Atualiza o campo Senha
-                    senhaAtual = String.valueOf(txtSenha.getPassword()); // Armazena o valor atual da Senha
-                    lblNotificacoes.setText("Campos atualizados com sucesso!"); // Mensagem de sucesso
+                    txtNome.setText(rstSqlAtualizarCampos.getString("nome"));
+                    nomeAtual = txtNome.getText();
+                    txtEmail.setText(rstSqlAtualizarCampos.getString("email"));
+                    emailAtual = txtEmail.getText();
+                    txtSenha.setText(rstSqlAtualizarCampos.getString("senha"));
+                    senhaAtual = String.valueOf(txtSenha.getPassword());
+
+                    // Notifica sucesso na atualização dos campos
+                    lblNotificacoes.setText("Campos atualizados com sucesso!");
                 } else {
-                    // Se o ID não for encontrado, informa o usuário
+                    // Notifica que o ID selecionado não foi encontrado
                     lblNotificacoes.setText("Ops! Não foi encontrado o id selecionado. Por favor, verifique e tente novamente.");
                 }
-                // Fecha o Statement após o uso
+
+                // Fecha o Statement
                 stmSqlAtualizarCampos.close();
             } else {
-                // Se nenhum ID válido for selecionado, pede para selecionar um ID e limpa os campos
+                // Se o ID não for válido, notifica o usuário para selecionar um ID e limpa os campos
                 lblNotificacoes.setText("Selecione um id para continuar.");
-                limparCampos(); // Limpa os campos
+                limparCampos();
             }
         } catch (Exception e) {
-            // Exibe uma mensagem de erro em caso de falha na busca dos dados
+            // Notifica falha ao tentar encontrar os IDs
             lblNotificacoes.setText(setHtmlFormat("Não foi possível encontrar os ids! Por favor, verifique e tente novamente."));
-            System.err.println("Erro: " + e); // Imprime o erro no console
+            // Exibe o erro no console
+            System.err.println("Erro: " + e);
         }
     }
 }
