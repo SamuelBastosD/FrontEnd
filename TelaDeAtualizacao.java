@@ -1,145 +1,137 @@
-// Importação das bibliotecas necessárias para criação de interface gráfica
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-// Definição da classe TelaDeAtualizacao que herda de JFrame (janela gráfica)
 public class TelaDeAtualizacao extends JFrame {
-    
-    // Declaração dos componentes visuais que serão usados na interface
-    public static JLabel lblId; // Rótulo para o campo de ID
-    public static JComboBox<String> cbxId; // ComboBox para seleção de IDs
-    public static String[] ids; // Array de IDs (valores que populam o ComboBox)
+    // Componentes da interface gráfica e variáveis para armazenar valores atuais
+    public static JLabel lblId; // Label para o campo de ID
+    public static JComboBox<String> cbxId; // ComboBox para seleção de ID
+    public static String[] ids; // Array de IDs que será populado com os valores do banco
 
-    public static JLabel lblNome; // Rótulo para o campo de Nome
-    public static JTextField txtNome; // Campo de texto para entrada do Nome
-    public static String nomeAtual; // Nome atual do registro selecionado
+    public static JLabel lblNome; // Label para o campo de Nome
+    public static JTextField txtNome; // Campo de texto para o Nome
+    public static String nomeAtual; // Variável para armazenar o nome atual
 
-    public static JLabel lblEmail; // Rótulo para o campo de Email
-    public static JTextField txtEmail; // Campo de texto para entrada do Email
-    public static String emailAtual; // Email atual do registro selecionado
+    public static JLabel lblEmail; // Label para o campo de Email
+    public static JTextField txtEmail; // Campo de texto para o Email
+    public static String emailAtual; // Variável para armazenar o email atual
 
-    public static JLabel lblSenha; // Rótulo para o campo de Senha
-    public static JPasswordField txtSenha; // Campo de senha para entrada de Senha
-    public static String senhaAtual; // Senha atual do registro selecionado
+    public static JLabel lblSenha; // Label para o campo de Senha
+    public static JPasswordField txtSenha; // Campo de texto para a senha (oculta)
+    public static String senhaAtual; // Variável para armazenar a senha atual
 
-    public static JLabel lblNotificacoes; // Rótulo para exibir notificações ao usuário
+    public static JLabel lblNotificacoes; // Label para exibir notificações ao usuário
 
-    public static JButton btnAtualizar; // Botão de ação para "Atualizar"
-    public static JButton btnCancelar; // Botão de ação para "Cancelar"
+    public static JButton btnAtualizar; // Botão para realizar a atualização do registro
+    public static JButton btnCancelar; // Botão para limpar os campos
 
     public static int tamanhoInputs = 20; // Tamanho padrão dos campos de entrada
 
-    // Construtor da classe TelaDeAtualizacao
+    // Construtor da tela de atualização
     public TelaDeAtualizacao() {
-        // Definição do título da janela
-        super("Tela de Atualização");
-        
-        // Configuração do layout da janela em grade (6 linhas, 1 coluna, espaçamento de 5px)
-        setLayout(new GridLayout(6,1,5,5));
+        super("Tela de Atualização"); // Título da janela
+        setLayout(new GridLayout(6, 1, 5, 5)); // Define layout da tela com 6 linhas e 1 coluna
 
-        // Criação do painel para o campo de ID (contém label e ComboBox)
+        // Linha de ID
         JPanel linha_id = new JPanel(new GridLayout(1, 2));
-        lblId = new JLabel("Id:", SwingConstants.RIGHT); // Rótulo à direita
+        lblId = new JLabel("Id:", SwingConstants.RIGHT); // Label para o campo de ID
         linha_id.add(lblId);
-        NavegadorDeRegistro.popularIds(); // Preenche o array de IDs
-        cbxId = new JComboBox(ids); // ComboBox para seleção dos IDs
+
+        NavegadorDeRegistro.popularIds(); // Popula o ComboBox com IDs disponíveis
+        cbxId = new JComboBox<>(ids); // ComboBox para seleção de ID
         linha_id.add(cbxId);
-        add(linha_id); // Adiciona o painel à janela
+        add(linha_id); // Adiciona a linha de ID à tela
 
-        // Criação do painel para o campo de Nome (contém label e campo de texto)
+        // Linha de Nome
         JPanel linha_nome = new JPanel(new GridLayout(1, 2));
-        lblNome = new JLabel("Nome:", SwingConstants.RIGHT); // Rótulo à direita
+        lblNome = new JLabel("Nome:", SwingConstants.RIGHT); // Label para o campo de Nome
         linha_nome.add(lblNome);
-        txtNome = new JTextField(tamanhoInputs); // Campo de texto para Nome
+        txtNome = new JTextField(tamanhoInputs); // Campo de texto para o Nome
         linha_nome.add(txtNome);
-        add(linha_nome); // Adiciona o painel à janela
+        add(linha_nome); // Adiciona a linha de Nome à tela
 
-        // Criação do painel para o campo de Email (contém label e campo de texto)
+        // Linha de Email
         JPanel linha_email = new JPanel(new GridLayout(1, 2));
-        lblEmail = new JLabel("Email:", SwingConstants.RIGHT); // Rótulo à direita
+        lblEmail = new JLabel("Email:", SwingConstants.RIGHT); // Label para o campo de Email
         linha_email.add(lblEmail);
-        txtEmail = new JTextField(tamanhoInputs); // Campo de texto para Email
+        txtEmail = new JTextField(tamanhoInputs); // Campo de texto para o Email
         linha_email.add(txtEmail);
-        add(linha_email); // Adiciona o painel à janela
+        add(linha_email); // Adiciona a linha de Email à tela
 
-        // Criação do painel para o campo de Senha (contém label e campo de senha)
+        // Linha de Senha
         JPanel linha_senha = new JPanel(new GridLayout(1, 2));
-        lblSenha = new JLabel("Senha:", SwingConstants.RIGHT); // Rótulo à direita
+        lblSenha = new JLabel("Senha:", SwingConstants.RIGHT); // Label para o campo de Senha
         linha_senha.add(lblSenha);
-        txtSenha = new JPasswordField(tamanhoInputs); // Campo de senha para Senha
+        txtSenha = new JPasswordField(tamanhoInputs); // Campo de texto para a Senha (campo de senha oculta)
         linha_senha.add(txtSenha);
-        add(linha_senha); // Adiciona o painel à janela
+        add(linha_senha); // Adiciona a linha de Senha à tela
 
-        // Criação do painel para os botões de ação (Atualizar e Cancelar)
+        // Linha de botões (Atualizar e Cancelar)
         JPanel linha_botoes = new JPanel(new GridLayout(1, 2));
-        btnAtualizar = new JButton("Atualizar"); // Botão de Atualizar
+        btnAtualizar = new JButton("Atualizar"); // Botão para atualizar os dados
         linha_botoes.add(btnAtualizar);
-        btnCancelar = new JButton("Cancelar"); // Botão de Cancelar
+        btnCancelar = new JButton("Cancelar"); // Botão para cancelar a operação e limpar campos
         linha_botoes.add(btnCancelar);
-        add(linha_botoes); // Adiciona o painel à janela
+        add(linha_botoes); // Adiciona a linha de botões à tela
 
-        // Criação do painel para o campo de notificações
+        // Linha de notificações
         JPanel linha_notificacoes = new JPanel(new GridLayout(1, 1));
-        lblNotificacoes = new JLabel("Notificações", SwingConstants.CENTER); // Rótulo centralizado
+        lblNotificacoes = new JLabel("Notificações", SwingConstants.CENTER); // Label para exibir mensagens de notificação
         linha_notificacoes.add(lblNotificacoes);
-        add(linha_notificacoes); // Adiciona o painel à janela
+        add(linha_notificacoes); // Adiciona a linha de notificações à tela
 
-        // Definição da ação para o botão "Atualizar" (chama método para atualizar o ID)
+        // Adiciona o listener para o botão Atualizar
         btnAtualizar.addActionListener(
             new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    NavegadorDeRegistro.atualizarId(); // Atualiza o registro do ID selecionado
+                    // Chama o método para atualizar o registro quando o botão é clicado
+                    NavegadorDeRegistro.atualizarId();
                 }
             }
         );
 
-        // Definição da ação para o botão "Cancelar" (chama método para limpar os campos)
+        // Adiciona o listener para o botão Cancelar
         btnCancelar.addActionListener(
             new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent event) {
-                    NavegadorDeRegistro.limparCampos(); // Limpa os campos da interface
+                    // Chama o método para limpar os campos quando o botão é clicado
+                    NavegadorDeRegistro.limparCampos();
                 }
             }
         );
 
-        // Ação a ser realizada quando um ID é selecionado no ComboBox
+        // Listener para o ComboBox de IDs, que atualiza os campos quando um ID é selecionado
         cbxId.addItemListener(
             new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent event) {
-                    // Verifica se o evento é de seleção de item
                     if (event.getStateChange() == ItemEvent.SELECTED) {
-                        NavegadorDeRegistro.atualizarCampos(cbxId.getSelectedItem().toString()); // Atualiza os campos de acordo com o ID selecionado
+                        // Chama o método para atualizar os campos baseados no ID selecionado
+                        NavegadorDeRegistro.atualizarCampos(cbxId.getSelectedItem().toString());
                     }
-                } 
+                }
             }
         );
 
-        // Define o tamanho da janela
-        setSize(250, 300);
-
-        // Carrega um ícone personalizado para a janela
-        ImageIcon img = new ImageIcon("./senac-logo.png");
+        // Configurações adicionais da janela
+        setSize(250, 300); // Define o tamanho da janela
+        ImageIcon img = new ImageIcon("./senac-logo.png"); // Define um ícone para a janela
         setIconImage(img.getImage());
-
-        // Torna a janela visível
-        setVisible(true);
-        
-        // Define o foco inicial no ComboBox de IDs
-        cbxId.requestFocus();
+        setVisible(true); // Torna a janela visível
+        cbxId.requestFocus(); // Define o foco no ComboBox de IDs ao abrir a janela
     }
 
-    // Método para formatar texto como HTML (opcional para melhorar a apresentação visual de labels)
+    // Método para formatar texto como HTML para exibição no JLabel
     public static String setHtmlFormat(String strTexto) {
         return "<html><body>" + strTexto + "</body></html>";
     }
 
-    // Método principal para iniciar o aplicativo
+    // Método principal para iniciar a aplicação
     public static void main(String[] args) {
-        TelaDeAtualizacao appTelaDeAtualizacao = new TelaDeAtualizacao(); // Cria a janela
-        appTelaDeAtualizacao.setDefaultCloseOperation(EXIT_ON_CLOSE); // Fecha o aplicativo ao fechar a janela
+        // Cria uma instância da tela de atualização
+        TelaDeAtualizacao appTelaDeAtualizacao = new TelaDeAtualizacao();
+        appTelaDeAtualizacao.setDefaultCloseOperation(EXIT_ON_CLOSE); // Define comportamento ao fechar a janela
     }
 }
